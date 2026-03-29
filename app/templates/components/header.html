@@ -1,0 +1,23 @@
+{% macro render_header(show_score=false) %}
+<header class="site-header">
+  <a class="site-header__title" href="{{ url_for('game.index') }}">BLOCK BLAST</a>
+
+  <nav class="site-header__nav">
+    <a class="site-header__nav-link" href="/leaderboard">LEADERBOARD</a>
+  </nav>
+
+  <div id="theme-switcher" class="theme-switcher"></div>
+
+  <div class="site-header__auth">
+    {% if current_user.is_authenticated %}
+      <span class="site-header__username">{{ current_user.username }}</span>
+      <form method="POST" action="{{ url_for('auth.logout') }}" class="site-header__logout-form">
+        <button type="submit" class="auth-btn auth-btn--outline">LOGOUT</button>
+      </form>
+    {% else %}
+      <a href="{{ url_for('auth.login') }}" class="auth-btn auth-btn--outline">SIGN IN</a>
+      <a href="{{ url_for('auth.register') }}" class="auth-btn auth-btn--filled">SIGN UP</a>
+    {% endif %}
+  </div>
+</header>
+{% endmacro %}

@@ -1,0 +1,120 @@
+{% from 'components/header.html' import render_header with context %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>BLOCK BLAST</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/game.css?v=4" />
+  <link rel="stylesheet" href="/static/css/themes.css?v=4" />
+</head>
+<body>
+
+  {{ render_header() }}
+
+  <!-- Difficulty selection screen -->
+  <div class="difficulty-overlay" id="difficulty-screen" style="display:none">
+    <div class="difficulty-panel">
+      <h1 class="game-title diff-title">BLOCK BLAST</h1>
+      <div class="diff-subtitle">SELECT DIFFICULTY</div>
+      <div class="diff-buttons">
+        <button class="diff-btn diff-beginner" id="btn-beginner">
+          <span class="diff-btn-name">BEGINNER</span>
+          <span class="diff-btn-desc">Clean board &middot; Smart blocks &middot; Frequent tools</span>
+        </button>
+        <button class="diff-btn diff-advanced" id="btn-advanced">
+          <span class="diff-btn-name">ADVANCED</span>
+          <span class="diff-btn-desc">Stone blocks &middot; Chains &middot; Balanced generation</span>
+        </button>
+        <button class="diff-btn diff-hardcore" id="btn-hardcore">
+          <span class="diff-btn-name">HARDCORE</span>
+          <span class="diff-btn-desc">Heavy obstacles &middot; Random chaos &middot; Rare tools</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="game-wrapper">
+    <header class="game-header">
+      <h1 class="game-title">BLOCK BLAST</h1>
+      <div class="score-panel">
+        <div class="score-label">SCORE</div>
+        <div class="score-value" id="score">0</div>
+      </div>
+      <div class="score-panel">
+        <div class="score-label">BEST</div>
+        <div class="score-value" id="best-score">0</div>
+      </div>
+    </header>
+
+    <!-- Difficulty selector -->
+    <div class="difficulty-selector">
+      <span class="diff-selector-label">DIFFICULTY:</span>
+      <div id="difficulty-switcher">
+        <button class="diff-switch-btn active" data-diff="beginner">BEGINNER</button>
+        <button class="diff-switch-btn" data-diff="advanced">ADVANCED</button>
+        <button class="diff-switch-btn" data-diff="hardcore">HARDCORE</button>
+      </div>
+    </div>
+
+    <!-- Tool bar -->
+    <div class="tool-bar-wrap">
+      <div class="tool-bar-label">TOOLS</div>
+      <div class="tool-bar" id="tool-bar">
+        <span class="tool-empty">NO TOOLS</span>
+      </div>
+    </div>
+
+    <main class="game-main">
+      <div class="board-container">
+        <div class="board" id="board"></div>
+      </div>
+      <div class="tray" id="tray"></div>
+    </main>
+
+    <div class="game-footer">
+      <a href="/leaderboard" class="leaderboard-link">LEADERBOARD</a>
+    </div>
+
+    <div class="game-over-overlay" id="game-over" style="display:none">
+      <div class="game-over-panel">
+        <h2 class="game-over-title">GAME OVER</h2>
+        <div class="final-score-label">FINAL SCORE</div>
+        <div class="final-score-value" id="final-score">0</div>
+        <button class="restart-btn" id="restart-btn">PLAY AGAIN</button>
+        <div id="leaderboard-panel" style="display:none; margin-top:16px;">
+          <div class="lb-panel-title">TOP SCORES</div>
+          <div id="lb-rows"></div>
+          <div id="lb-rank-msg" class="lb-rank-msg" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tool unlock notification -->
+  <div class="tool-notification" id="tool-notification"></div>
+
+  <div class="drag-ghost" id="drag-ghost" style="display:none"></div>
+
+  <script>
+    window.AUTH = {
+      loggedIn: {{ current_user.is_authenticated | tojson }},
+      username: {{ (current_user.username if current_user.is_authenticated else '') | tojson }}
+    };
+  </script>
+  <script src="/static/js/save_system.js"></script>
+  <script src="/static/js/starfield.js"></script>
+  <script src="/static/js/steampunk_fx.js"></script>
+  <script src="/static/js/themes.js"></script>
+  <script src="/static/js/move_rating.js"></script>
+  <script src="/static/js/difficulty.js"></script>
+  <script src="/static/js/tools.js"></script>
+  <script src="/static/js/game.js"></script>
+  <script>if (window.Themes) Themes.init();</script>
+</body>
+</html>

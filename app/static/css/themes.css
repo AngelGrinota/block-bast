@@ -1,0 +1,250 @@
+/* ============================================================
+   BLOCK BLAST — themes.css
+   Theme variable overrides + move-rating styles
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   CYBERPUNK (default — no overrides needed, base vars in game.css)
+   ------------------------------------------------------------ */
+:root.theme-cyberpunk {
+  /* inherits all defaults from :root in game.css */
+}
+
+/* ------------------------------------------------------------
+   STEAMPUNK
+   ------------------------------------------------------------ */
+:root.theme-steampunk {
+  --bg:        #1a0f00;
+  --panel:     #2a1a00;
+  --border:    #5c3a00;
+  --grid-line: rgba(180, 120, 0, 0.15);
+  --neon-blue:   #d4841e;
+  --neon-purple: #c07000;
+  --neon-pink:   #e85010;
+  --neon-green:  #a0b000;
+  --neon-yellow: #e0c040;
+  --text:      #f0d8a0;
+  --text-dim:  #8a6030;
+}
+
+/* ------------------------------------------------------------
+   COSMOS
+   ------------------------------------------------------------ */
+:root.theme-cosmos {
+  --bg:        #000510;
+  --panel:     #050a1a;
+  --border:    #0a1535;
+  --grid-line: rgba(80, 40, 180, 0.2);
+  --neon-blue:   #4080ff;
+  --neon-purple: #8020ff;
+  --neon-pink:   #ff40a0;
+  --neon-green:  #40ffe0;
+  --neon-yellow: #c0a0ff;
+  --text:      #d0d8ff;
+  --text-dim:  #5060a0;
+}
+
+:root.theme-cosmos body {
+  background: radial-gradient(ellipse at 50% 50%, #020820 0%, #000510 60%, #000005 100%);
+}
+
+/* Cosmos: fallback star-speckle background (pure CSS, no canvas) */
+.theme-cosmos body {
+  background-image:
+    radial-gradient(ellipse at 20% 30%, rgba(80, 20, 180, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 75% 65%, rgba(20, 50, 180, 0.14) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 10%, rgba(160, 20, 90, 0.10) 0%, transparent 45%),
+    radial-gradient(1px 1px at 10% 12%, rgba(255,255,255,0.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 25% 40%, rgba(200,220,255,0.6) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 38% 8%,  rgba(255,255,255,0.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 55% 72%, rgba(180,200,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 67% 30%, rgba(255,255,255,0.6) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 80% 18%, rgba(200,180,255,0.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 90% 55%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 5%  80%, rgba(200,220,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 44% 90%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 72% 85%, rgba(180,200,255,0.5) 0%, transparent 100%),
+    radial-gradient(ellipse at 50% 50%, #020820 0%, #000510 60%, #000005 100%);
+}
+
+/* Cosmos: game wrapper gets deep space gradient */
+.theme-cosmos .game-wrapper {
+  background: linear-gradient(
+    160deg,
+    rgba(10, 5, 40, 0.92) 0%,
+    rgba(4, 8, 30, 0.95) 50%,
+    rgba(2, 4, 20, 0.97) 100%
+  );
+  border-color: rgba(80, 40, 200, 0.3);
+  box-shadow:
+    0 0 40px rgba(64, 128, 255, 0.08),
+    inset 0 0 60px rgba(80, 20, 180, 0.05);
+}
+
+/* Cosmos: board cells — cosmic glow palette */
+.theme-cosmos .board-cell {
+  box-shadow: inset 0 0 4px rgba(64, 128, 255, 0.12);
+  transition: box-shadow 0.2s ease;
+}
+
+.theme-cosmos .board-cell.filled {
+  box-shadow:
+    0 0 8px rgba(128, 32, 255, 0.5),
+    0 0 16px rgba(64, 128, 255, 0.25),
+    inset 0 0 6px rgba(255, 255, 255, 0.1);
+}
+
+/* Cosmos: score panel accent */
+.theme-cosmos .score-value {
+  text-shadow:
+    0 0 12px rgba(64, 128, 255, 0.8),
+    0 0 24px rgba(128, 32, 255, 0.4);
+}
+
+/* Cosmos: title glow */
+.theme-cosmos .game-title {
+  text-shadow:
+    0 0 16px rgba(128, 32, 255, 0.9),
+    0 0 32px rgba(64, 128, 255, 0.5),
+    0 0 48px rgba(255, 64, 160, 0.2);
+}
+
+/* ------------------------------------------------------------
+   STEAMPUNK — enhanced visual styles
+   ------------------------------------------------------------ */
+
+/* Steampunk: game wrapper gets aged parchment gradient */
+.theme-steampunk .game-wrapper {
+  background: linear-gradient(
+    150deg,
+    rgba(35, 18, 0, 0.95) 0%,
+    rgba(26, 15, 0, 0.97) 50%,
+    rgba(20, 10, 0, 0.98) 100%
+  );
+  border-color: rgba(92, 58, 0, 0.6);
+  box-shadow:
+    0 0 40px rgba(212, 132, 30, 0.07),
+    inset 0 0 60px rgba(80, 40, 0, 0.12);
+}
+
+/* Steampunk: board cells — brass/copper tones */
+.theme-steampunk .board-cell {
+  box-shadow: inset 0 0 3px rgba(180, 100, 0, 0.15);
+}
+
+.theme-steampunk .board-cell.filled {
+  box-shadow:
+    0 0 8px rgba(212, 132, 30, 0.55),
+    0 0 16px rgba(160, 80, 0, 0.28),
+    inset 0 0 5px rgba(255, 200, 80, 0.12);
+}
+
+/* Steampunk: score accent */
+.theme-steampunk .score-value {
+  text-shadow:
+    0 0 10px rgba(212, 132, 30, 0.85),
+    0 0 22px rgba(160, 80, 0, 0.45);
+}
+
+/* Steampunk: title glow */
+.theme-steampunk .game-title {
+  text-shadow:
+    0 0 14px rgba(212, 132, 30, 0.9),
+    0 0 28px rgba(200, 112, 0, 0.5),
+    0 0 44px rgba(232, 80, 16, 0.2);
+}
+
+/* Steampunk: riveted border panel effect */
+.theme-steampunk .board-container {
+  box-shadow:
+    0 0 0 2px rgba(92, 58, 0, 0.8),
+    0 0 0 4px rgba(42, 26, 0, 0.9),
+    0 0 20px rgba(212, 132, 30, 0.15),
+    4px 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+/* Gear element base class (injected by steampunk_fx.js, but also styled here) */
+.steampunk-gear {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.55;
+  filter: drop-shadow(0 0 6px rgba(212, 132, 30, 0.5));
+}
+
+/* Steam particle base class */
+.steam-particle {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 5000;
+}
+
+/* ============================================================
+   MOVE RATING FLOATING ELEMENT
+   ============================================================ */
+.move-rating {
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Orbitron', monospace;
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: 8px;
+  pointer-events: none;
+  z-index: 4000;
+  white-space: nowrap;
+  animation: ratingPop 0.9s ease-out forwards;
+}
+
+@keyframes ratingPop {
+  0%   { opacity: 0;   transform: translate(-50%, -50%) scale(0.5); }
+  20%  { opacity: 1;   transform: translate(-50%, -50%) scale(1.1); }
+  50%  { opacity: 1;   transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0;   transform: translate(-50%, calc(-50% - 40px)) scale(0.8); }
+}
+
+.rating-good {
+  color: var(--neon-blue);
+  text-shadow: 0 0 20px var(--neon-blue);
+}
+
+.rating-excellent {
+  color: var(--neon-purple);
+  text-shadow: 0 0 20px var(--neon-purple);
+}
+
+.rating-perfect {
+  color: var(--neon-pink);
+  text-shadow: 0 0 30px var(--neon-pink);
+}
+
+/* ============================================================
+   THEME-SPECIFIC BOARD GLOW OVERRIDES
+   ============================================================ */
+.theme-steampunk .board {
+  box-shadow: 0 0 25px rgba(212,132,30,0.25), 0 0 80px rgba(212,132,30,0.1);
+}
+
+.theme-cosmos .board {
+  box-shadow: 0 0 25px rgba(128,32,255,0.25), 0 0 80px rgba(64,128,255,0.1);
+}
+
+/* ============================================================
+   STEAMPUNK DIFFICULTY BUTTONS
+   ============================================================ */
+.theme-steampunk .diff-switch-btn.active {
+  border-color: var(--neon-blue);
+  color: var(--neon-blue);
+  box-shadow: 0 0 8px rgba(212,132,30,0.4);
+}
+
+/* ============================================================
+   COSMOS DIFFICULTY BUTTONS
+   ============================================================ */
+.theme-cosmos .diff-switch-btn.active {
+  border-color: var(--neon-purple);
+  color: var(--neon-purple);
+  box-shadow: 0 0 8px rgba(128,32,255,0.4);
+}
