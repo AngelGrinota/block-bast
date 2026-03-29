@@ -32,6 +32,7 @@ ENV/
 instance/*.db
 instance/uploaded_images/
 .webassets-cache
+.flaskenv
 
 # ============================================================
 # AI / ASSISTANT FILES — NOT COMMITTED
@@ -93,6 +94,20 @@ logs/
 htmlcov/
 .tox/
 .nox/
+
+# ============================================================
+# DATABASE
+# ============================================================
+*.db
+*.sqlite
+*.sqlite3
+
+# ============================================================
+# MIGRATIONS (Alembic)
+# ============================================================
+migrations/versions/*.py
+!migrations/versions/__init__.py
+migrations/__pycache__/
 
 # ============================================================
 # MISC
