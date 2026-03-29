@@ -21,6 +21,9 @@ def register():
         if len(password) < 8:
             flash('Password must be at least 8 characters.', 'error')
             return render_template('register.html')
+        if len(password) > 20:
+            flash('Password must be 20 characters or fewer.', 'error')
+            return render_template('register.html')
         if password != confirm:
             flash('Passwords do not match.', 'error')
             return render_template('register.html')

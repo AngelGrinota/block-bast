@@ -31,14 +31,17 @@
 
       <form method="POST" action="{{ url_for('auth.login') }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-        <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="auth-form-fields">
           <div class="auth-field">
             <label for="username">USERNAME</label>
             <input type="text" id="username" name="username" autocomplete="username" required />
           </div>
           <div class="auth-field">
             <label for="password">PASSWORD</label>
-            <input type="password" id="password" name="password" autocomplete="current-password" required />
+            <div class="password-wrapper">
+              <input type="password" id="password" name="password" autocomplete="current-password" required class="password-input"/>
+              <button type="button" id="toggle-password" class="toggle-password-btn" aria-label="Toggle password visibility">👁️</button>
+            </div>
           </div>
           <button type="submit" class="auth-btn">ENTER</button>
         </div>
@@ -55,5 +58,6 @@
   </div>
   <script src="/static/js/themes.js"></script>
   <script src="/static/js/auth_init.js"></script>
+  <script src="/static/js/password_toggle.js?v=2" defer></script>
 </body>
 </html>
