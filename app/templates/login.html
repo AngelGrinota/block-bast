@@ -34,12 +34,12 @@
         <div class="auth-form-fields">
           <div class="auth-field">
             <label for="username">USERNAME</label>
-            <input type="text" id="username" name="username" autocomplete="username" required />
+            <input type="text" id="username" name="username" autocomplete="username" required maxlength="20" />
           </div>
           <div class="auth-field">
             <label for="password">PASSWORD</label>
             <div class="password-wrapper">
-              <input type="password" id="password" name="password" autocomplete="current-password" required class="password-input"/>
+              <input type="password" id="password" name="password" autocomplete="current-password" required maxlength="20" class="password-input"/>
               <button type="button" id="toggle-password" class="toggle-password-btn" aria-label="Toggle password visibility">👁️</button>
             </div>
           </div>
