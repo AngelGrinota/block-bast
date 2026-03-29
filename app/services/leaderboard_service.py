@@ -104,3 +104,89 @@ def get_top_scores(difficulty: str = None, limit: int = 50) -> list:
         })
 
     return result
+
+
+def get_top_scores_paginated(difficulty: str = None, page: int = 1, per_page: int = 15) -> dict:
+    """
+    Return paginated top scores ordered by score descending.
+    Optionally filtered by difficulty.
+    Returns: { scores: [...], total: int, pages: int, current_page: int, has_next: bool, has_prev: bool }
+    """
+    base_query = (
+        db.session.query(Score, User.username)
+        .join(User, Score.user_id == User.id)
+    )
+
+    if difficulty:
+        base_query = base_query.filter(Score.difficulty == difficulty)
+
+    # Get total count before ordering
+    total = base_query.count()
+    
+    pages = (total + per_page - 1) // per_page  # ceiling division
+    current_page = max(1, min(page, pages)) if pages > 0 else 1
+
+    offset = (current_page - 1) * per_page
+    rows = base_query.order_by(Score.score.desc()).offset(offset).limit(per_page).all()
+
+    result = []
+    for rank, (score_obj, username) in enumerate(rows, start=1 + offset):
+        result.append({
+            'rank': rank,
+            'username': username,
+            'score': score_obj.score,
+            'difficulty': score_obj.difficulty,
+            'date': score_obj.updated_at.strftime('%Y-%m-%d %H:%M'),
+        })
+
+    return {
+        'scores': result,
+        'total': total,
+        'pages': pages,
+        'current_page': current_page,
+        'has_next': current_page < pages,
+        'has_prev': current_page > 1,
+    }
+
+
+def get_score_history_paginated(difficulty: str = None, page: int = 1, per_page: int = 15) -> dict:
+    """
+    Return paginated score history ordered by created_at descending.
+    Optionally filtered by difficulty.
+    Returns: { scores: [...], total: int, pages: int, current_page: int, has_next: bool, has_prev: bool }
+    """
+    base_query = (
+        db.session.query(ScoreHistory, User.username)
+        .join(User, ScoreHistory.user_id == User.id)
+    )
+
+    if difficulty:
+        base_query = base_query.filter(ScoreHistory.difficulty == difficulty)
+
+    # Get total count before ordering
+    total = base_query.count()
+    
+    pages = (total + per_page - 1) // per_page  # ceiling division
+    current_page = max(1, min(page, pages)) if pages > 0 else 1
+
+    offset = (current_page - 1) * per_page
+    rows = base_query.order_by(ScoreHistory.created_at.desc()).offset(offset).limit(per_page).all()
+
+    result = []
+    for rank, (history_obj, username) in enumerate(rows, start=1 + offset):
+        result.append({
+            'rank': rank,
+            'username': username,
+            'score': history_obj.score,
+            'difficulty': history_obj.difficulty,
+            'date': history_obj.created_at.strftime('%Y-%m-%d %H:%M'),
+        })
+
+    return {
+        'scores': result,
+        'total': total,
+        'pages': pages,
+        'current_page': current_page,
+        'has_next': current_page < pages,
+        'has_prev': current_page > 1,
+    }

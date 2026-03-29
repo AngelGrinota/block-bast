@@ -1,8 +1,8 @@
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request, jsonify, redirect, url_for
 from flask_login import login_required, current_user
 from app import db, limiter, csrf
 from app.models.score import Score
-from app.services.leaderboard_service import save_score, get_top_scores, get_score_history
+from app.services.leaderboard_service import save_score, get_top_scores, get_score_history, get_top_scores_paginated, get_score_history_paginated
 
 leaderboard_bp = Blueprint('leaderboard', __name__)
 
@@ -10,14 +10,50 @@ leaderboard_bp = Blueprint('leaderboard', __name__)
 @leaderboard_bp.route('/leaderboard')
 def leaderboard():
     difficulty = request.args.get('difficulty', '').strip() or None
+    page = request.args.get('page', 1, type=int)
+    mobile_param = request.args.get('mobile', None)
+
+    # Если параметр mobile не задан, используем значение по умолчанию (ПК)
+    # JavaScript на странице установит правильное значение при загрузке
+    if mobile_param is None:
+        mobile_param = 'false'
+
+    # Определяем количество записей на страницу: 5 для мобильных, 10 для ПК
+    per_page = 5 if mobile_param.lower() == 'true' else 10
+
     valid_difficulties = ('beginner', 'advanced', 'hardcore')
+
     if difficulty in valid_difficulties:
-        scores = get_top_scores(difficulty=difficulty, limit=50)
+        # Пагинация для конкретной сложности
+        pagination = get_top_scores_paginated(difficulty=difficulty, page=page, per_page=per_page)
+        scores = pagination['scores']
+        total_pages = pagination['pages']
+        current_page = pagination['current_page']
+        has_next = pagination['has_next']
+        has_prev = pagination['has_prev']
+        total_scores = pagination['total']
         section = difficulty
     else:
-        scores = get_score_history(difficulty=None, limit=100)
+        # Пагинация для ALL (история всех попыток)
+        pagination = get_score_history_paginated(difficulty=None, page=page, per_page=per_page)
+        scores = pagination['scores']
+        total_pages = pagination['pages']
+        current_page = pagination['current_page']
+        has_next = pagination['has_next']
+        has_prev = pagination['has_prev']
+        total_scores = pagination['total']
         section = 'all'
-    return render_template('leaderboard.html', scores=scores, current_difficulty=difficulty, section=section)
+
+    return render_template('leaderboard.html',
+                          scores=scores,
+                          current_difficulty=difficulty,
+                          section=section,
+                          total_pages=total_pages,
+                          current_page=current_page,
+                          has_next=has_next,
+                          has_prev=has_prev,
+                          total_scores=total_scores,
+                          per_page=per_page)
 
 
 @leaderboard_bp.route('/api/scores', methods=['POST'])

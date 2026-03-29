@@ -9,108 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/static/css/game.css" />
   <link rel="stylesheet" href="/static/css/themes.css" />
-  <style>
-    .auth-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      gap: 32px;
-      position: relative;
-      z-index: 1;
-    }
-    .auth-panel {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 40px 48px;
-      width: 100%;
-      max-width: 420px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      box-shadow: 0 0 40px rgba(176, 0, 255, 0.15);
-    }
-    .auth-title {
-      text-align: center;
-      font-size: 1.1rem;
-      letter-spacing: 6px;
-      color: var(--neon-blue);
-      text-shadow: 0 0 10px var(--neon-blue);
-      margin-bottom: 8px;
-    }
-    .auth-field {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .auth-field label {
-      font-size: 0.55rem;
-      letter-spacing: 3px;
-      color: var(--text-dim);
-    }
-    .auth-field input {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text);
-      font-family: 'Orbitron', monospace;
-      font-size: 0.8rem;
-      padding: 10px 14px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .auth-field input:focus {
-      border-color: var(--neon-blue);
-      box-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
-    }
-    .auth-btn {
-      background: transparent;
-      border: 1px solid var(--neon-blue);
-      border-radius: 6px;
-      color: var(--neon-blue);
-      font-family: 'Orbitron', monospace;
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 3px;
-      padding: 12px;
-      cursor: pointer;
-      transition: background 0.2s, box-shadow 0.2s;
-      margin-top: 8px;
-    }
-    .auth-btn:hover {
-      background: rgba(0, 212, 255, 0.1);
-      box-shadow: 0 0 16px rgba(0, 212, 255, 0.4);
-    }
-    .auth-link {
-      text-align: center;
-      font-size: 0.6rem;
-      letter-spacing: 2px;
-      color: var(--text-dim);
-    }
-    .auth-link a {
-      color: var(--neon-purple);
-      text-decoration: none;
-    }
-    .auth-link a:hover {
-      text-shadow: 0 0 8px var(--neon-purple);
-    }
-    .flash-errors {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .flash-error {
-      background: rgba(255, 0, 100, 0.1);
-      border: 1px solid rgba(255, 0, 100, 0.4);
-      border-radius: 4px;
-      color: var(--neon-pink);
-      font-size: 0.6rem;
-      letter-spacing: 1px;
-      padding: 8px 12px;
-    }
-  </style>
+  <link rel="stylesheet" href="/static/css/auth.css" />
 </head>
 <body>
   {{ render_header() }}
@@ -154,9 +53,7 @@
       <a href="{{ url_for('game.index') }}">&larr; BACK TO GAME</a>
     </div>
   </div>
-  <script src="/static/js/starfield.js"></script>
-  <script src="/static/js/steampunk_fx.js"></script>
   <script src="/static/js/themes.js"></script>
-  <script>if (window.Themes) Themes.init();</script>
+  <script src="/static/js/auth_init.js"></script>
 </body>
 </html>

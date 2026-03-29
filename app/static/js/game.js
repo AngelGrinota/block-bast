@@ -77,6 +77,11 @@ function initGame(difficulty) {
   renderBoard();
   dealBlocks();
 
+  // Очищаем tools при новой игре
+  if (window.Tools && window.Tools.clearToolsState) {
+    window.Tools.clearToolsState();
+  }
+
   if (window.Tools) {
     window.Tools.initTools(currentDifficulty);
   }
@@ -533,6 +538,10 @@ function checkGameOver() {
       finalEl.textContent = score;
       gameOverEl.style.display = 'flex';
       if (window.SaveSystem) window.SaveSystem.clear();
+      // Очищаем сохранение tools при game over
+      if (window.Tools && window.Tools.clearToolsState) {
+        window.Tools.clearToolsState();
+      }
 
       if (window.AUTH && window.AUTH.loggedIn) {
         fetch('/api/scores', {
@@ -643,6 +652,10 @@ document.querySelectorAll('.diff-switch-btn').forEach(function (btn) {
 
 // ---- Restart → re-init same difficulty ----
 restartBtn.addEventListener('click', function () {
+  // Очищаем сохранение tools при рестарте
+  if (window.Tools && window.Tools.clearToolsState) {
+    window.Tools.clearToolsState();
+  }
   gameOverEl.style.display = 'none';
   initGame(currentDifficulty);
 });
@@ -663,7 +676,12 @@ function restoreGame(state) {
   document.querySelectorAll('.diff-switch-btn').forEach(function(btn) {
     btn.classList.toggle('active', btn.dataset.diff === currentDifficulty);
   });
-  if (window.Tools) window.Tools.initTools(currentDifficulty);
+  // Загружаем tools из сохранения (activeTool будет сброшен в initTools)
+  if (window.Tools && window.Tools.loadToolsState) {
+    window.Tools.loadToolsState();
+    window.Tools.renderToolBar();
+    window.Tools.updateBoardCursor();
+  }
 }
 
 // ---- Game-over leaderboard panel update ----

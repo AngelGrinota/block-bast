@@ -9,19 +9,54 @@ window.Tools = (function () {
     { id: 'chainbreak', name: 'CHAIN BRK', icon: '\u26d3' },
   ];
 
+  const SAVE_KEY = 'blockblast_tools';
+
   let inventory = [];
   let nextToolScore = 1000;
   let activeTool = null;
 
+  function saveToolsState() {
+    try {
+      const state = { inventory, nextToolScore };
+      localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+    } catch(e) {}
+  }
+
+  function loadToolsState() {
+    try {
+      const raw = localStorage.getItem(SAVE_KEY);
+      if (raw) {
+        const state = JSON.parse(raw);
+        inventory = state.inventory || [];
+        nextToolScore = state.nextToolScore || 1000;
+        return true;
+      }
+    } catch(e) {}
+    return false;
+  }
+
+  function clearToolsState() {
+    try { localStorage.removeItem(SAVE_KEY); } catch(e) {}
+  }
+
   function initTools(difficulty) {
-    inventory = [];
     activeTool = null;
-    if (window.Difficulty && difficulty && window.Difficulty.DIFFICULTY_CONFIG[difficulty]) {
-      nextToolScore = window.Difficulty.DIFFICULTY_CONFIG[difficulty].toolFrequency;
-    } else {
-      nextToolScore = 1000;
+    
+    // Пытаемся загрузить сохранённое состояние
+    const loaded = loadToolsState();
+    
+    if (!loaded) {
+      // Если нет сохранения, инициализируем заново
+      inventory = [];
+      if (window.Difficulty && difficulty && window.Difficulty.DIFFICULTY_CONFIG[difficulty]) {
+        nextToolScore = window.Difficulty.DIFFICULTY_CONFIG[difficulty].toolFrequency;
+      } else {
+        nextToolScore = 1000;
+      }
     }
+    
     renderToolBar();
+    updateBoardCursor();
   }
 
   function isToolActive() {
@@ -39,6 +74,7 @@ window.Tools = (function () {
       nextToolScore += freq;
       showToolNotification(tool.name);
       renderToolBar();
+      saveToolsState();
     }
   }
 
@@ -76,6 +112,7 @@ window.Tools = (function () {
       if (typeof dealBlocks === 'function') dealBlocks();
       renderToolBar();
       updateBoardCursor();
+      saveToolsState();
       // Сохраняем состояние после shuffle
       if (window.SaveSystem) window.SaveSystem.save({
         difficulty: currentDifficulty,
@@ -204,6 +241,7 @@ window.Tools = (function () {
     activeTool = null;
     updateBoardCursor();
     renderToolBar();
+    saveToolsState();
   }
 
   function showToolNotification(toolName) {
@@ -221,5 +259,9 @@ window.Tools = (function () {
     checkToolUnlock,
     renderToolBar,
     handleToolClick,
+    saveToolsState,
+    loadToolsState,
+    clearToolsState,
+    updateBoardCursor,
   };
 })();

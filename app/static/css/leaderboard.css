@@ -1,0 +1,364 @@
+/* ============================================================
+   BLOCK BLAST — leaderboard.css
+   Styles for leaderboard page
+   ============================================================ */
+
+:root {
+  --lb-row-h: 52px;
+  --lb-head-h: 44px;
+}
+
+.lb-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 16px 32px;
+  max-width: 900px;
+  width: 100%;
+}
+
+.lb-title-block {
+  text-align: center;
+  padding-top: 8px;
+}
+
+/* Заголовок использует .game-title — стили в game.css и themes.css */
+
+.lb-main-title {
+  font-size: 0.55rem;
+  letter-spacing: 5px;
+  color: var(--text-dim);
+  margin-top: 8px;
+}
+
+/* Фильтр сложностей */
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: nowrap;
+  justify-content: center;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 4px 4px;
+}
+
+.filter-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-dim);
+  font-family: 'Orbitron', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 2px;
+  padding: 8px 14px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease-out;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.filter-btn:hover {
+  border-color: var(--neon-blue);
+  color: var(--neon-blue);
+}
+
+.filter-btn.active {
+  border-color: var(--neon-blue);
+  color: var(--neon-blue);
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.25);
+}
+
+.filter-btn.beginner.active  { border-color: var(--neon-green);  color: var(--neon-green);  box-shadow: 0 0 12px rgba(0,255,136,0.25); }
+.filter-btn.advanced.active  { border-color: var(--neon-yellow); color: var(--neon-yellow); box-shadow: 0 0 12px rgba(255,238,0,0.25); }
+.filter-btn.hardcore.active  { border-color: var(--neon-pink);   color: var(--neon-pink);   box-shadow: 0 0 12px rgba(255,0,170,0.25); }
+
+/* Контейнер таблицы + пагинации */
+.lb-table-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Таблица — БЕЗ СКРОЛЛА */
+.lb-table-wrap {
+  width: 100%;
+  background: rgba(15, 15, 26, 0.6);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  /* ТОЧНАЯ высота для 10 записей + заголовок + отступы */
+  height: calc(var(--lb-head-h) + (10 * var(--lb-row-h)) + 24px);
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+th {
+  height: var(--lb-head-h);
+  padding: 0 10px;
+  font-size: 0.5rem;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  text-align: left;
+  border-bottom: 1px solid rgba(100, 100, 255, 0.2);
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  background: rgba(15, 15, 26, 0.98);
+  z-index: 10;
+}
+
+td {
+  height: var(--lb-row-h);
+  padding: 0 10px;
+  font-size: 0.65rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: background 0.2s;
+}
+
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255, 255, 255, 0.03); }
+
+/* Ширины колонок (ПК) */
+th:nth-child(1), td:nth-child(1) { width: 20%; text-align: center; }  /* RANK */
+th:nth-child(2), td:nth-child(2) { width: 20%; text-align: center; }  /* PLAYER */
+th:nth-child(3), td:nth-child(3) { width: 20%; text-align: center; }  /* SCORE */
+th:nth-child(4), td:nth-child(4) { width: 20%; text-align: center; }  /* DIFFICULTY */
+th:nth-child(5), td:nth-child(5) { width: 20%; text-align: center; font-size: 0.6rem; }  /* DATE */
+
+.rank-1 td:first-child { color: var(--neon-yellow); text-shadow: 0 0 8px rgba(255,238,0,0.5); font-weight: 700; }
+.rank-2 td:first-child { color: #c0c0c0; font-weight: 700; }
+.rank-3 td:first-child { color: #cd7f32; font-weight: 700; }
+
+.diff-badge {
+  font-size: 0.45rem;
+  letter-spacing: 1px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+.diff-beginner  { color: var(--neon-green);  border-color: rgba(0,255,136,0.4);  background: rgba(0,255,136,0.05); }
+.diff-advanced  { color: var(--neon-yellow); border-color: rgba(255,238,0,0.4); background: rgba(255,238,0,0.05); }
+.diff-hardcore  { color: var(--neon-pink);   border-color: rgba(255,0,170,0.4);   background: rgba(255,0,170,0.05); }
+
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  font-size: 0.7rem;
+  letter-spacing: 3px;
+  min-height: calc(10 * var(--lb-row-h));
+}
+
+.back-link {
+  font-size: 0.55rem;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: color 0.2s;
+  margin-top: 4px;
+}
+.back-link:hover { color: var(--neon-blue); }
+
+/* Пагинация */
+.pagination-wrapper {
+  width: 100%;
+}
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.page-btn {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 7px 12px;
+  background: transparent;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  min-width: 36px;
+  text-align: center;
+}
+.page-btn:hover {
+  border-color: var(--neon-blue);
+  color: var(--neon-blue);
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+}
+.page-btn.active {
+  border-color: var(--neon-blue);
+  color: var(--neon-blue);
+  background: rgba(0, 212, 255, 0.1);
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.3);
+}
+.page-btn.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.page-info {
+  font-size: 0.45rem;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  margin-top: 10px;
+  text-align: center;
+}
+
+/* Тематические пагинации */
+:root.theme-steampunk .page-btn.active { border-color: #d4841e; color: #d4841e; background: rgba(212, 132, 30, 0.15); box-shadow: 0 0 10px rgba(212, 132, 30, 0.4); }
+:root.theme-cosmos .page-btn.active { border-color: #4080ff; color: #4080ff; background: rgba(64, 128, 255, 0.12); box-shadow: 0 0 12px rgba(64, 128, 255, 0.4); }
+:root.theme-piggy .page-btn.active { border-color: #ff6699; color: #ff6699; background: rgba(255, 102, 153, 0.12); box-shadow: 0 0 12px rgba(255, 102, 153, 0.4); }
+
+/* ============================================================
+   АДАПТИВ — МОБИЛЬНЫЕ (до 768px) — 5 строк БЕЗ скролла
+   ============================================================ */
+@media (max-width: 768px) {
+  :root {
+    --lb-row-h: 44px;
+    --lb-head-h: 40px;
+  }
+
+  .lb-wrapper {
+    padding: 12px 12px 28px;
+    gap: 14px;
+    max-width: 100%;
+  }
+
+  .lb-title-block {
+    padding-top: 6px;
+  }
+
+  .lb-main-title {
+    font-size: 0.45rem;
+    letter-spacing: 3px;
+    margin-top: 6px;
+  }
+
+  .filter-bar {
+    gap: 6px;
+    padding: 2px 4px;
+  }
+
+  .filter-btn {
+    font-size: 0.5rem;
+    padding: 6px 10px;
+    letter-spacing: 1px;
+  }
+
+  .lb-table-container {
+    gap: 10px;
+  }
+
+  .lb-table-wrap {
+    padding: 10px 12px;
+    /* ТОЧНАЯ высота для 5 записей + заголовок + отступы */
+    height: calc(var(--lb-head-h) + (5 * var(--lb-row-h)) + 20px);
+  }
+
+  th { font-size: 0.43rem; padding: 0 6px; letter-spacing: 1px; }
+  td { font-size: 0.58rem; padding: 0 6px; }
+
+  /* Ширины колонок для мобильных */
+  th:nth-child(1), td:nth-child(1) { width: 11%; text-align: center; }  /* RANK */
+  th:nth-child(2), td:nth-child(2) { width: 24%; text-align: center; }  /* PLAYER */
+  th:nth-child(3), td:nth-child(3) { width: 15%; text-align: center; }  /* SCORE */
+  th:nth-child(4), td:nth-child(4) { width: 17%; text-align: center; }  /* DIFFICULTY */
+  th:nth-child(5), td:nth-child(5) { width: 33%; text-align: center; font-size: 0.55rem; }  /* DATE */
+
+  .diff-badge {
+    font-size: 0.4rem;
+    padding: 2px 5px;
+    letter-spacing: 0;
+  }
+
+  .pagination { gap: 5px; }
+  .page-btn { font-size: 0.45rem; padding: 6px 10px; min-width: 32px; }
+  .page-info { font-size: 0.4rem; }
+  .back-link { font-size: 0.5rem; }
+
+  .empty-state {
+    min-height: calc(5 * var(--lb-row-h));
+  }
+}
+
+/* Очень маленькие экраны (до 400px) — 5 строк БЕЗ скролла */
+@media (max-width: 400px) {
+  :root {
+    --lb-row-h: 40px;
+    --lb-head-h: 38px;
+  }
+
+  .lb-wrapper {
+    padding: 8px 10px 24px;
+    gap: 12px;
+  }
+
+  .lb-title-block {
+    padding-top: 4px;
+  }
+
+  .lb-main-title {
+    font-size: 0.4rem;
+    letter-spacing: 2px;
+    margin-top: 4px;
+  }
+
+  .filter-btn {
+    font-size: 0.48rem;
+    padding: 5px 8px;
+  }
+
+  .lb-table-container {
+    gap: 8px;
+  }
+
+  .lb-table-wrap {
+    padding: 8px 10px;
+    /* ТОЧНАЯ высота для 5 записей + заголовок + отступы */
+    height: calc(var(--lb-head-h) + (5 * var(--lb-row-h)) + 18px);
+  }
+
+  th { font-size: 0.4rem; padding: 0 4px; }
+  td { font-size: 0.55rem; padding: 0 4px; }
+
+  th:nth-child(1), td:nth-child(1) { width: 12%; text-align: center; }  /* RANK */
+  th:nth-child(2), td:nth-child(2) { width: 22%; text-align: center; }  /* PLAYER */
+  th:nth-child(3), td:nth-child(3) { width: 15%; text-align: center; }  /* SCORE */
+  th:nth-child(4), td:nth-child(4) { width: 17%; text-align: center; }  /* DIFFICULTY */
+  th:nth-child(5), td:nth-child(5) { width: 34%; text-align: center; font-size: 0.5rem; }  /* DATE */
+
+  .diff-badge { font-size: 0.38rem; padding: 2px 4px; }
+  .page-btn { font-size: 0.43rem; padding: 5px 8px; min-width: 30px; }
+  .page-info { font-size: 0.38rem; }
+
+  .empty-state {
+    min-height: calc(5 * var(--lb-row-h));
+  }
+}

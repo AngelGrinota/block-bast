@@ -1,0 +1,218 @@
+/* ============================================================
+   BLOCK BLAST — auth.css
+   Styles for login and register pages
+   ============================================================ */
+
+.auth-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 32px;
+  position: relative;
+  z-index: 1;
+}
+
+.auth-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 40px 48px;
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 0 40px rgba(176, 0, 255, 0.15);
+}
+
+.auth-title {
+  text-align: center;
+  font-size: 1.1rem;
+  letter-spacing: 6px;
+  color: var(--neon-blue);
+  text-shadow: 0 0 10px var(--neon-blue);
+  margin-bottom: 8px;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.auth-field label {
+  font-size: 0.55rem;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+}
+
+.auth-field input {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: 'Orbitron', monospace;
+  font-size: 0.8rem;
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.auth-field input:focus {
+  border-color: var(--neon-blue);
+  box-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
+}
+
+.auth-btn {
+  display: inline-block;
+  font-family: 'Orbitron', monospace;
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+  line-height: 1;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+/* Outline variant (Login, Logout) */
+.auth-btn--outline {
+  background: transparent;
+  border: 1px solid var(--neon-blue);
+  color: var(--neon-blue);
+}
+
+.auth-btn--outline:hover {
+  background: rgba(0, 212, 255, 0.12);
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.35);
+}
+
+/* Filled variant (Sign Up, Create Account) */
+.auth-btn--filled {
+  background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+  border: 1px solid transparent;
+  color: #fff;
+  text-shadow: none;
+  -webkit-text-fill-color: #fff;
+}
+
+.auth-btn--filled:hover {
+  box-shadow: 0 0 16px rgba(0, 212, 255, 0.5), 0 0 16px rgba(176, 0, 255, 0.4);
+  filter: brightness(1.15);
+}
+
+.auth-link {
+  text-align: center;
+  font-size: 0.6rem;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+}
+
+.auth-link a {
+  color: var(--neon-purple);
+  text-decoration: none;
+}
+
+.auth-link a:hover {
+  text-shadow: 0 0 8px var(--neon-purple);
+}
+
+.flash-errors {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.flash-error {
+  background: rgba(255, 0, 100, 0.1);
+  border: 1px solid rgba(255, 0, 100, 0.4);
+  border-radius: 4px;
+  color: var(--neon-pink);
+  font-size: 0.6rem;
+  letter-spacing: 1px;
+  padding: 8px 12px;
+}
+
+/* Адаптивность для авторизации */
+@media (max-width: 768px) {
+  .auth-wrapper {
+    padding-top: 120px;
+  }
+
+  .auth-panel {
+    padding: 32px 28px;
+    max-width: 90%;
+  }
+
+  .auth-title {
+    font-size: 1rem;
+    letter-spacing: 4px;
+  }
+
+  .auth-field input {
+    font-size: 0.75rem;
+    padding: 9px 12px;
+  }
+
+  .auth-btn {
+    font-size: 0.7rem;
+    padding: 11px;
+  }
+
+  .auth-link {
+    font-size: 0.55rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .auth-wrapper {
+    padding-top: 130px;
+    gap: 24px;
+  }
+
+  .auth-panel {
+    padding: 28px 24px;
+    max-width: 95%;
+  }
+
+  .auth-title {
+    font-size: 0.95rem;
+    letter-spacing: 3px;
+  }
+
+  .auth-field {
+    gap: 5px;
+  }
+
+  .auth-field label {
+    font-size: 0.5rem;
+    letter-spacing: 2px;
+  }
+
+  .auth-field input {
+    font-size: 0.7rem;
+    padding: 8px 11px;
+  }
+
+  .auth-btn {
+    font-size: 0.65rem;
+    padding: 10px;
+    letter-spacing: 2px;
+  }
+
+  .auth-link {
+    font-size: 0.5rem;
+    letter-spacing: 1px;
+  }
+
+  .flash-error {
+    font-size: 0.55rem;
+    padding: 7px 10px;
+  }
+}

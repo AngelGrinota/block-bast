@@ -17,14 +17,14 @@
   --bg:        #1a0f00;
   --panel:     #2a1a00;
   --border:    #5c3a00;
-  --grid-line: rgba(180, 120, 0, 0.15);
+  --grid-line: rgba(180, 120, 0, 0.28);
   --neon-blue:   #d4841e;
   --neon-purple: #c07000;
   --neon-pink:   #e85010;
   --neon-green:  #a0b000;
   --neon-yellow: #e0c040;
   --text:      #f0d8a0;
-  --text-dim:  #8a6030;
+  --text-dim:  #b07840;
 }
 
 /* ------------------------------------------------------------
@@ -34,14 +34,14 @@
   --bg:        #000510;
   --panel:     #050a1a;
   --border:    #0a1535;
-  --grid-line: rgba(80, 40, 180, 0.2);
+  --grid-line: rgba(80, 40, 180, 0.32);
   --neon-blue:   #4080ff;
   --neon-purple: #8020ff;
   --neon-pink:   #ff40a0;
   --neon-green:  #40ffe0;
   --neon-yellow: #c0a0ff;
   --text:      #d0d8ff;
-  --text-dim:  #5060a0;
+  --text-dim:  #7080c0;
 }
 
 :root.theme-cosmos body {
@@ -101,14 +101,6 @@
     0 0 24px rgba(128, 32, 255, 0.4);
 }
 
-/* Cosmos: title glow */
-.theme-cosmos .game-title {
-  text-shadow:
-    0 0 16px rgba(128, 32, 255, 0.9),
-    0 0 32px rgba(64, 128, 255, 0.5),
-    0 0 48px rgba(255, 64, 160, 0.2);
-}
-
 /* ------------------------------------------------------------
    STEAMPUNK — enhanced visual styles
    ------------------------------------------------------------ */
@@ -144,14 +136,6 @@
   text-shadow:
     0 0 10px rgba(212, 132, 30, 0.85),
     0 0 22px rgba(160, 80, 0, 0.45);
-}
-
-/* Steampunk: title glow */
-.theme-steampunk .game-title {
-  text-shadow:
-    0 0 14px rgba(212, 132, 30, 0.9),
-    0 0 28px rgba(200, 112, 0, 0.5),
-    0 0 44px rgba(232, 80, 16, 0.2);
 }
 
 /* Steampunk: riveted border panel effect */
@@ -235,16 +219,74 @@
    STEAMPUNK DIFFICULTY BUTTONS
    ============================================================ */
 .theme-steampunk .diff-switch-btn.active {
-  border-color: var(--neon-blue);
+  border: 2px solid var(--neon-blue);
   color: var(--neon-blue);
-  box-shadow: 0 0 8px rgba(212,132,30,0.4);
+  background: rgba(212, 132, 30, 0.1);
+  box-shadow: 0 0 12px rgba(212,132,30,0.5);
 }
 
 /* ============================================================
    COSMOS DIFFICULTY BUTTONS
    ============================================================ */
 .theme-cosmos .diff-switch-btn.active {
-  border-color: var(--neon-purple);
+  border: 2px solid var(--neon-purple);
   color: var(--neon-purple);
-  box-shadow: 0 0 8px rgba(128,32,255,0.4);
+  background: rgba(128, 32, 255, 0.1);
+  box-shadow: 0 0 12px rgba(128,32,255,0.5);
+}
+
+/* ============================================================
+   PIGGY — soft candy / marshmallow palette
+   ============================================================ */
+:root.theme-piggy {
+  --bg:          #120810;
+  --panel:       #1e1018;
+  --border:      #4a1f38;
+  --grid-line:   rgba(255, 130, 175, 0.25);
+  --neon-blue:   #ff9aca;   /* warm pink  (was blue)    */
+  --neon-purple: #d890ff;   /* soft lavender            */
+  --neon-pink:   #ff5faa;   /* bubblegum pink           */
+  --neon-green:  #90ffcc;   /* mint                     */
+  --neon-yellow: #ffd0a0;   /* peach / cream            */
+  --text:        #ffe0f0;
+  --text-dim:    #cc7799;
+}
+
+/* Piggy: body gradient — warm dark candy */
+:root.theme-piggy body {
+  background: radial-gradient(ellipse at 50% 0%, rgba(200, 40, 100, 0.14) 0%, transparent 65%);
+}
+
+/* Piggy: game wrapper */
+.theme-piggy .game-wrapper {
+  background: linear-gradient(
+    155deg,
+    rgba(30, 10, 22, 0.95) 0%,
+    rgba(20, 8, 16, 0.97) 55%,
+    rgba(12, 5, 10, 0.98) 100%
+  );
+  border-color: rgba(200, 80, 130, 0.3);
+  box-shadow:
+    0 0 40px rgba(255, 100, 160, 0.07),
+    inset 0 0 60px rgba(180, 40, 90, 0.05);
+}
+
+/* Piggy: board glow */
+.theme-piggy .board {
+  box-shadow: 0 0 25px rgba(255,100,170,0.22), 0 0 70px rgba(200,80,140,0.09);
+}
+
+/* Piggy: score value */
+.theme-piggy .score-value {
+  text-shadow:
+    0 0 12px rgba(255, 154, 202, 0.85),
+    0 0 24px rgba(216, 144, 255, 0.4);
+}
+
+/* Piggy: active diff button */
+.theme-piggy .diff-switch-btn.active {
+  border: 2px solid var(--neon-pink);
+  color: var(--neon-pink);
+  background: rgba(255, 95, 170, 0.1);
+  box-shadow: 0 0 12px rgba(255, 95, 170, 0.5);
 }

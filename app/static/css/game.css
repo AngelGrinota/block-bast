@@ -4,14 +4,14 @@
   --bg: #0a0a0f;
   --panel: #0f0f1a;
   --border: #1a1a2e;
-  --grid-line: rgba(100, 100, 255, 0.15);
+  --grid-line: rgba(100, 100, 255, 0.28);
   --neon-blue: #00d4ff;
   --neon-purple: #b000ff;
   --neon-pink: #ff00aa;
   --neon-green: #00ff88;
   --neon-yellow: #ffee00;
   --text: #e0e0ff;
-  --text-dim: #6060aa;
+  --text-dim: #8888bb;
   --cell-size: 52px;
 }
 
@@ -52,6 +52,10 @@ body::before {
   justify-content: center;
 }
 
+.game-header .score-panel {
+  margin: 0 4px;
+}
+
 .game-title {
   font-size: 2rem;
   font-weight: 900;
@@ -60,7 +64,6 @@ body::before {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 0 12px rgba(176,0,255,0.6));
 }
 
 .score-panel {
@@ -119,7 +122,26 @@ body::before {
 
 .cell.filled {
   border-color: transparent;
+  position: relative;
+  z-index: 2;
 }
+
+/* Specular highlight on ::before — keeps ::after free for chain/stone symbols */
+.cell.filled::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 40% 35%, rgba(255,255,255,0.28) 0%, transparent 55%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Stronger inset glow for 52px board cells — matches tray vividness */
+.cell.filled.color-0 { box-shadow: inset 0 0 28px rgba(0,212,255,1.0),   0 0 10px rgba(0,212,255,0.55); }
+.cell.filled.color-1 { box-shadow: inset 0 0 28px rgba(176,0,255,1.0),   0 0 10px rgba(176,0,255,0.55); }
+.cell.filled.color-2 { box-shadow: inset 0 0 28px rgba(255,0,170,1.0),   0 0 10px rgba(255,0,170,0.55); }
+.cell.filled.color-3 { box-shadow: inset 0 0 28px rgba(0,255,136,1.0),   0 0 10px rgba(0,255,136,0.55); }
+.cell.filled.color-4 { box-shadow: inset 0 0 28px rgba(255,238,0,1.0),   0 0 10px rgba(255,238,0,0.55); }
 
 /* Highlight for drag preview */
 .cell.highlight-valid {
@@ -154,7 +176,7 @@ body::before {
 /* Tray */
 .tray {
   display: flex;
-  gap: 20px;
+  gap: 12px;
   justify-content: center;
   flex-wrap: wrap;
   padding: 16px 20px;
@@ -180,6 +202,8 @@ body::before {
   display: grid;
   cursor: grab;
   transition: filter 0.15s, transform 0.15s;
+  transform: scale(0.85);
+  transform-origin: center;
   user-select: none;
   touch-action: none;
 }
@@ -531,7 +555,11 @@ body::before {
   font-weight: 700;
   color: rgba(230,180,255,0.95);
   text-shadow: 0 0 6px rgba(200,100,255,0.8);
+  z-index: 2;
 }
+
+/* stone symbol also above specular ::before layer */
+.cell-stone::after { z-index: 2; }
 
 .cell-locked {
   background: #080810 !important;
@@ -741,27 +769,6 @@ body::before {
 }
 
 /* ============================================================
-   GAME FOOTER / LEADERBOARD LINK
-   ============================================================ */
-.game-footer {
-  margin-top: 8px;
-}
-
-.leaderboard-link {
-  font-family: 'Orbitron', monospace;
-  font-size: 0.55rem;
-  letter-spacing: 3px;
-  color: var(--text-dim);
-  text-decoration: none;
-  transition: color 0.15s;
-}
-
-.leaderboard-link:hover {
-  color: var(--neon-purple);
-  text-shadow: 0 0 8px rgba(176, 0, 255, 0.4);
-}
-
-/* ============================================================
    SITE HEADER — top bar shown on all pages
    ============================================================ */
 .site-header {
@@ -845,15 +852,51 @@ body::before {
   margin-top: 60px;
 }
 
+.lb-wrapper {
+  margin-top: 60px;
+}
+
+@media (max-width: 768px) {
+  .game-wrapper {
+    margin-top: 130px; /* учитываем двухрядную шапку + переключатель тем */
+  }
+  .lb-wrapper {
+    margin-top: 130px;
+  }
+}
+
+@media (max-width: 420px) {
+  .game-wrapper {
+    margin-top: 140px; /* ещё больше места для очень маленьких экранов */
+  }
+  .lb-wrapper {
+    margin-top: 140px;
+  }
+}
+
 .auth-wrapper {
   padding-top: 60px;
+}
+
+@media (max-width: 768px) {
+  .auth-wrapper {
+    padding-top: 130px;
+  }
+}
+
+@media (max-width: 420px) {
+  .auth-wrapper {
+    padding-top: 140px;
+  }
 }
 
 /* ============================================================
    AUTH BUTTONS — shared base
    ============================================================ */
 .auth-btn {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-family: 'Orbitron', monospace;
   font-size: 0.55rem;
   font-weight: 700;
@@ -864,8 +907,8 @@ body::before {
   text-decoration: none;
   transition: background 0.2s, box-shadow 0.2s, color 0.2s;
   line-height: 1;
-  vertical-align: middle;
   white-space: nowrap;
+  text-align: center;
 }
 
 /* Outline variant (Sign In, Logout) */
@@ -974,6 +1017,30 @@ body::before {
   filter: brightness(1.2);
 }
 
+/* ----------------------------------------------------------
+   PIGGY theme — pink playful vibe
+   ---------------------------------------------------------- */
+:root.theme-piggy .auth-btn--outline {
+  border-color: #ff6699;
+  color: #ff6699;
+}
+
+:root.theme-piggy .auth-btn--outline:hover {
+  background: rgba(255, 102, 153, 0.12);
+  box-shadow: 0 0 14px rgba(255, 102, 153, 0.5);
+}
+
+:root.theme-piggy .auth-btn--filled {
+  background: linear-gradient(135deg, #ff80b3 0%, #ff6699 100%);
+  box-shadow: 0 0 12px rgba(255, 102, 153, 0.4);
+}
+
+:root.theme-piggy .auth-btn--filled:hover {
+  box-shadow: 0 0 20px rgba(255, 102, 153, 0.6),
+              0 0 20px rgba(255, 150, 180, 0.4);
+  filter: brightness(1.15);
+}
+
 /* ============================================================
    RESPONSIVE LAYOUT — mobile touch & fluid sizing
    ============================================================ */
@@ -983,55 +1050,182 @@ body { touch-action: none; }
 .tray-cell { touch-action: none; }
 
 @media (max-width: 600px) {
-  :root { --cell-size: clamp(28px, 9vw, 44px); }
-  
+  :root { --cell-size: clamp(26px, 8vw, 40px); }
+
   .game-wrapper {
-    padding: 12px 8px;
+    padding: 10px 8px;
+    gap: 14px;
+  }
+
+  .game-header {
+    gap: 12px;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .game-title {
+    font-size: 0.9rem;
+    letter-spacing: 3px;
+    flex-shrink: 0;
+  }
+
+  /* Score panels on mobile — grouped together */
+  .game-header .score-panel {
+    padding: 4px 8px;
+    min-width: 55px;
+  }
+
+  .game-header .score-label {
+    font-size: 0.4rem;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+
+  .game-header .score-value {
+    font-size: 0.9rem;
+  }
+
+  .game-main {
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  /* Tray same width as board on mobile */
+  .tray {
+    width: 100%;
+    max-width: min(90vw, 500px);
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    padding: 10px;
+    gap: 12px;
+    box-sizing: border-box;
+  }
+
+  .tray-slot {
+    width: 80px;
+    height: 60px;
+  }
+
+  /* Уменьшаем фигуры на мобильных */
+  .tray .block-preview {
+    transform: scale(0.85);
+    transform-origin: center;
+  }
+
+  .board-container {
+    padding: 6px;
+  }
+
+  /* Difficulty selector on mobile */
+  .difficulty-selector {
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px 12px;
+    width: 100%;
+    max-width: min(90vw, 500px);
+    box-sizing: border-box;
+  }
+
+  .diff-selector-label {
+    font-size: 0.45rem;
+    text-align: center;
+  }
+
+  #difficulty-switcher {
+    width: 100%;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .diff-switch-btn {
+    min-height: 34px;
+    padding: 6px 8px;
+    font-size: 0.45rem;
+    letter-spacing: 1px;
+    flex: 1;
+    max-width: 90px;
+  }
+
+  /* Tool bar on mobile */
+  .tool-bar-wrap {
+    justify-content: center;
+    min-height: 32px;
+    width: 100%;
+    max-width: min(90vw, 500px);
+  }
+
+  .tool-bar-label {
+    font-size: 0.45rem;
+  }
+
+  .tool-btn {
+    font-size: 0.45rem;
+    padding: 4px 8px;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 420px) {
+  :root { --cell-size: clamp(22px, 6.5vw, 34px); }
+
+  .game-wrapper {
+    padding: 8px 6px;
     gap: 12px;
   }
-  
+
   .game-header {
-    gap: 16px;
-    flex-wrap: wrap;
-    justify-content: center;
+    gap: 8px;
   }
-  
+
   .game-title {
-    font-size: 1.2rem;
-    letter-spacing: 4px;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
   }
-  
-  .score-panel {
-    padding: 6px 12px;
-    min-width: 70px;
+
+  .game-header .score-panel {
+    padding: 3px 6px;
+    min-width: 50px;
   }
-  
-  .score-value {
-    font-size: 1.1rem;
+
+  .game-header .score-label {
+    font-size: 0.38rem;
   }
-  
-  .game-main { 
-    flex-direction: column; 
-    align-items: center; 
-    gap: 16px; 
+
+  .game-header .score-value {
+    font-size: 0.85rem;
   }
-  
-  .tray { 
-    flex-direction: row; 
-    flex-wrap: wrap; 
-    justify-content: center;
-    min-width: unset;
-    padding: 12px;
-    gap: 10px;
-  }
-  
-  .tray-slot { 
-    width: 90px; 
-    height: 70px; 
-  }
-  
-  .board-container {
+
+  .tray {
     padding: 8px;
+    gap: 6px;
+  }
+
+  .tray-slot {
+    width: 70px;
+    height: 48px;
+  }
+
+  .difficulty-selector {
+    padding: 6px 10px;
+  }
+
+  .diff-switch-btn {
+    min-height: 32px;
+    padding: 5px 6px;
+    font-size: 0.4rem;
+    max-width: 80px;
+  }
+
+  .tool-bar-label {
+    font-size: 0.4rem;
+  }
+
+  /* Ещё сильнее уменьшаем фигуры на очень маленьких экранах */
+  .tray .block-preview {
+    transform: scale(0.75);
   }
 }
 
@@ -1059,14 +1253,8 @@ body::after {
 .board-container { box-shadow: 0 40px 80px rgba(0,0,0,0.5); }
 
 /* ============================================================
-   CYBERPUNK ANIMATED GRID
+   CYBERPUNK ANIMATED GRID — УДАЛЕНО (блоки теперь всегда яркие)
    ============================================================ */
-@keyframes gridPulse {
-  0%, 100% { opacity: 0.4; }
-  50%       { opacity: 0.7; }
-}
-
-.board { animation: gridPulse 4s ease-in-out infinite; }
 
 /* ============================================================
    BLOCK HIGHLIGHT POLISH
@@ -1113,7 +1301,7 @@ body::after {
 
 .diff-switch-btn {
   background: transparent;
-  border: 1px solid var(--border);
+  border: 1px solid rgba(120, 120, 200, 0.45);
   border-radius: 6px;
   color: var(--text-dim);
   font-family: 'Orbitron', monospace;
@@ -1126,9 +1314,10 @@ body::after {
 }
 
 .diff-switch-btn.active {
-  border-color: var(--neon-blue);
+  border: 2px solid var(--neon-blue);
   color: var(--neon-blue);
-  box-shadow: 0 0 8px rgba(0,212,255,0.3);
+  background: rgba(0, 212, 255, 0.1);
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.45);
 }
 
 .diff-switch-btn:hover {
@@ -1151,48 +1340,133 @@ body {
   .site-header {
     flex-wrap: wrap;
     height: auto;
-    padding: 8px 12px;
-    gap: 6px;
+    min-height: 56px;
+    padding: 10px 12px;
+    gap: 10px;
+    justify-content: space-between;
   }
+
   .site-header__title {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    flex-shrink: 0;
   }
+
+  /* Навигация (LEADERBOARD) — сразу после заголовка */
   .site-header__nav {
-    order: 3;
-    width: 100%;
-    justify-content: flex-start;
-  }
-  .site-header .theme-switcher {
+    order: 1;
     margin-left: 0;
-    order: 2;
   }
+
+  .site-header__nav-link {
+    font-size: 0.5rem;
+    letter-spacing: 2px;
+  }
+
+  /* Переключатель тем — на всю ширину */
+  .site-header .theme-switcher {
+    order: 4;
+    width: 100%;
+    justify-content: center;
+    margin-top: 4px;
+    gap: 4px;
+  }
+
+  .theme-btn {
+    font-size: 0.45rem;
+    padding: 4px 8px;
+  }
+
+  /* Авторизация — правее заголовка */
   .site-header__auth {
     order: 2;
-    gap: 6px;
+    gap: 8px;
+    margin-left: auto;
   }
+
+  .site-header__username {
+    font-size: 0.5rem;
+    letter-spacing: 2px;
+  }
+
   .auth-btn {
-    min-height: 40px;
-    padding: 8px 10px;
-    font-size: 0.6rem;
+    font-size: 0.5rem;
+    padding: 6px 10px;
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1;
   }
+
+  /* Сложность — под шапкой */
   .difficulty-selector {
+    order: 5;
+    width: 100%;
     flex-direction: column;
     gap: 8px;
     padding: 8px 12px;
+    margin-top: 4px;
   }
+
   .diff-selector-label {
     font-size: 0.45rem;
+    text-align: center;
   }
+
   #difficulty-switcher {
     width: 100%;
     justify-content: center;
+    gap: 4px;
   }
+
   .diff-switch-btn {
-    min-height: 38px;
-    padding: 8px 10px;
-    font-size: 0.5rem;
+    min-height: 36px;
+    padding: 6px 8px;
+    font-size: 0.45rem;
+    letter-spacing: 1px;
     flex: 1;
-    max-width: 110px;
+    max-width: 100px;
+  }
+}
+
+/* Очень маленькие экраны (менее 420px) */
+@media (max-width: 420px) {
+  .site-header {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .site-header__title {
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+  }
+
+  .site-header__nav-link {
+    font-size: 0.45rem;
+  }
+
+  .theme-btn {
+    font-size: 0.4rem;
+    padding: 3px 6px;
+  }
+
+  .auth-btn {
+    font-size: 0.45rem;
+    padding: 5px 8px;
+    min-height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1;
+  }
+
+  .diff-switch-btn {
+    font-size: 0.4rem;
+    padding: 5px 6px;
+    max-width: 80px;
   }
 }
 

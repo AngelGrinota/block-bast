@@ -15,8 +15,8 @@ def register():
         if not username:
             flash('Username is required.', 'error')
             return render_template('register.html')
-        if len(username) > 64:
-            flash('Username must be 64 characters or fewer.', 'error')
+        if len(username) > 20:
+            flash('Username must be 20 characters or fewer.', 'error')
             return render_template('register.html')
         if len(password) < 8:
             flash('Password must be at least 8 characters.', 'error')

@@ -10,6 +10,7 @@
     { name: 'cyberpunk', label: 'CYBER' },
     { name: 'steampunk', label: 'STEAM' },
     { name: 'cosmos',    label: 'COSMOS' },
+    { name: 'piggy',     label: 'OINK'  },
   ];
 
   var STORAGE_KEY = 'bbTheme';
@@ -25,12 +26,10 @@
     });
 
     // Stop FX for the theme we are leaving
-    if (prev === 'cosmos' && name !== 'cosmos') {
-      if (window.Starfield) window.Starfield.stop();
-    }
-    if (prev === 'steampunk' && name !== 'steampunk') {
-      if (window.SteampunkFX) window.SteampunkFX.stop();
-    }
+    if (prev === 'cosmos'     && name !== 'cosmos')     { if (window.Starfield)    window.Starfield.stop();    }
+    if (prev === 'steampunk'  && name !== 'steampunk')  { if (window.SteampunkFX)  window.SteampunkFX.stop();  }
+    if (prev === 'cyberpunk'  && name !== 'cyberpunk')  { if (window.CyberpunkFX)  window.CyberpunkFX.stop();  }
+    if (prev === 'piggy'      && name !== 'piggy')      { if (window.PiggyFX)      window.PiggyFX.stop();      }
 
     THEMES.forEach(function (t) {
       document.documentElement.classList.remove('theme-' + t.name);
@@ -38,13 +37,11 @@
     document.documentElement.classList.add('theme-' + name);
     try { localStorage.setItem(STORAGE_KEY, name); } catch (e) {}
 
-    // Start FX for the new theme
-    if (name === 'cosmos') {
-      if (window.Starfield) window.Starfield.init();
-    }
-    if (name === 'steampunk') {
-      if (window.SteampunkFX) window.SteampunkFX.init();
-    }
+    // Start FX for the new theme (only if the module exists)
+    if (name === 'cosmos'    && window.Starfield)   { window.Starfield.init();   }
+    if (name === 'steampunk' && window.SteampunkFX) { window.SteampunkFX.init(); }
+    if (name === 'cyberpunk' && window.CyberpunkFX) { window.CyberpunkFX.init(); }
+    if (name === 'piggy'     && window.PiggyFX)     { window.PiggyFX.init();     }
 
     // Update active state on buttons if rendered
     var btns = document.querySelectorAll('.theme-btn');
