@@ -234,6 +234,7 @@ function dealBlocks() {
 
   trayBlocks = generated;
   renderTray();
+  // Сохранение вызывается отдельно после действий игрока
 }
 
 function renderTray() {
@@ -415,17 +416,24 @@ async function placeBlock(row, col, idx) {
 
   await clearLines();
 
-  if (window.SaveSystem) window.SaveSystem.save({
-    difficulty: currentDifficulty,
-    score: score,
-    board: board,
-    blocks: trayBlocks
-  });
-
   if (trayBlocks.every(function (b) { return b.used; })) {
     dealBlocks();
+    // Сохраняем состояние после генерации новых блоков
+    if (window.SaveSystem) window.SaveSystem.save({
+      difficulty: currentDifficulty,
+      score: score,
+      board: board,
+      blocks: trayBlocks
+    });
   } else {
     checkGameOver();
+    // Сохраняем состояние после установки блока (если не были сгенерированы новые)
+    if (window.SaveSystem) window.SaveSystem.save({
+      difficulty: currentDifficulty,
+      score: score,
+      board: board,
+      blocks: trayBlocks
+    });
   }
 }
 
@@ -597,6 +605,13 @@ boardEl.addEventListener('click', function (e) {
   window.Tools.handleToolClick(r, c, board, function () {
     renderBoard();
     checkGameOver();
+    // Сохраняем состояние после использования инструмента
+    if (window.SaveSystem) window.SaveSystem.save({
+      difficulty: currentDifficulty,
+      score: score,
+      board: board,
+      blocks: trayBlocks
+    });
   });
 });
 
@@ -644,13 +659,6 @@ function restoreGame(state) {
   bestEl.textContent = bestScore;
   renderBoard();
   renderTray();
-  // Re-attach drag handlers to restored tray blocks
-  trayBlocks.forEach(function(block, idx) {
-    if (!block.used) {
-      var previewEl = trayEl.querySelector('[data-idx="' + idx + '"]');
-      if (previewEl) attachDragHandlers(previewEl, idx);
-    }
-  });
   // update difficulty buttons
   document.querySelectorAll('.diff-switch-btn').forEach(function(btn) {
     btn.classList.toggle('active', btn.dataset.diff === currentDifficulty);
@@ -688,20 +696,19 @@ function updateGameOverLeaderboard(data) {
   panel.style.display = 'block';
 }
 
-// ---- Start: auto-start on beginner ----
-initGame('beginner');
-
-// Check for saved game
-if (window.SaveSystem && window.SaveSystem.hasSave()) {
-  var saved = window.SaveSystem.load();
-  if (saved && saved.board && saved.blocks) {
-    var resume = confirm('Resume previous game? (' + saved.difficulty + ', score: ' + saved.score + ')');
-    if (resume) {
-      restoreGame(saved);
-    } else {
-      window.SaveSystem.clear();
+// ---- Start: check for saved game first ----
+(function startGame() {
+  if (window.SaveSystem && window.SaveSystem.hasSave()) {
+    var saved = window.SaveSystem.load();
+    if (saved && saved.board && saved.blocks) {
+      var resume = confirm('Resume previous game? (' + saved.difficulty + ', score: ' + saved.score + ')');
+      if (resume) {
+        restoreGame(saved);
+        return;
+      }
     }
-  } else {
     window.SaveSystem.clear();
   }
-}
+  // No save or user declined — start new game
+  initGame('beginner');
+})();

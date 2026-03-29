@@ -76,6 +76,13 @@ window.Tools = (function () {
       if (typeof dealBlocks === 'function') dealBlocks();
       renderToolBar();
       updateBoardCursor();
+      // Сохраняем состояние после shuffle
+      if (window.SaveSystem) window.SaveSystem.save({
+        difficulty: currentDifficulty,
+        score: score,
+        board: board,
+        blocks: trayBlocks
+      });
       return;
     }
 
