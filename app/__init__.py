@@ -1,13 +1,18 @@
-from flask import Flask
+from flask import Flask, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
+from flask_wtf.csrf import CSRFProtect
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
 bcrypt = Bcrypt()
+csrf = CSRFProtect()
+limiter = Limiter(key_func=get_remote_address)
 
 
 def create_app():
@@ -18,8 +23,17 @@ def create_app():
     migrate.init_app(app, db)
     login_manager.init_app(app)
     bcrypt.init_app(app)
+    csrf.init_app(app)
+    limiter.init_app(app)
 
     login_manager.login_view = 'auth.login'
+
+    @login_manager.unauthorized_handler
+    def unauthorized():
+        from flask import request, jsonify
+        if request.path.startswith('/api/'):
+            return jsonify({'status': 'error', 'message': 'authentication required'}), 401
+        return redirect(login_manager.login_view)
 
     with app.app_context():
         # Import models so SQLAlchemy registers them

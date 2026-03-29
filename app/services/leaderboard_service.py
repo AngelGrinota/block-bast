@@ -15,29 +15,33 @@ def save_score(user_id: int, score_val: int, difficulty: str) -> bool:
     - If existing Score record and new score is not higher: do nothing, return False.
     Both the history insert and the upsert are committed in the same transaction.
     """
-    # Always record the attempt in history
-    history_entry = ScoreHistory(user_id=user_id, score=score_val, difficulty=difficulty)
-    db.session.add(history_entry)
+    try:
+        # Always record the attempt in history
+        history_entry = ScoreHistory(user_id=user_id, score=score_val, difficulty=difficulty)
+        db.session.add(history_entry)
 
-    existing = (
-        db.session.query(Score)
-        .filter_by(user_id=user_id, difficulty=difficulty)
-        .one_or_none()
-    )
+        existing = (
+            db.session.query(Score)
+            .filter_by(user_id=user_id, difficulty=difficulty)
+            .one_or_none()
+        )
 
-    updated = False
+        updated = False
 
-    if existing is None:
-        entry = Score(user_id=user_id, score=score_val, difficulty=difficulty)
-        db.session.add(entry)
-        updated = True
-    elif score_val > existing.score:
-        existing.score = score_val
-        existing.updated_at = datetime.now(timezone.utc)
-        updated = True
+        if existing is None:
+            entry = Score(user_id=user_id, score=score_val, difficulty=difficulty)
+            db.session.add(entry)
+            updated = True
+        elif score_val > existing.score:
+            existing.score = score_val
+            existing.updated_at = datetime.now(timezone.utc)
+            updated = True
 
-    db.session.commit()
-    return updated
+        db.session.commit()
+        return updated
+    except Exception as e:
+        db.session.rollback()
+        return False
 
 
 def get_score_history(difficulty: str = None, limit: int = 100) -> list:

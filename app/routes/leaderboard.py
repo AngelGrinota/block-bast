@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, jsonify
 from flask_login import login_required, current_user
-from app import db
+from app import db, limiter, csrf
 from app.models.score import Score
 from app.services.leaderboard_service import save_score, get_top_scores, get_score_history
 
@@ -21,6 +21,9 @@ def leaderboard():
 
 
 @leaderboard_bp.route('/api/scores', methods=['POST'])
+@login_required
+@limiter.limit("10 per minute")
+@csrf.exempt
 def post_score():
     if not current_user.is_authenticated:
         return jsonify({'status': 'error', 'message': 'authentication required'}), 401

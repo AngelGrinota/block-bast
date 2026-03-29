@@ -94,6 +94,24 @@
         </div>
       </div>
     </div>
+
+    <!-- Login prompt modal for unauthenticated users -->
+    <div class="login-prompt-overlay" id="login-prompt" style="display:none">
+      <div class="login-prompt-panel">
+        <h2 class="login-prompt-title">GAME OVER</h2>
+        <div class="final-score-label">YOUR SCORE</div>
+        <div class="final-score-value" id="prompt-final-score">0</div>
+        <div class="login-prompt-msg">
+          <span class="lp-warning">⚠ SCORE NOT SAVED</span>
+          <p>Log in or register to save your score to the leaderboard!</p>
+        </div>
+        <div class="login-prompt-buttons">
+          <button class="lp-btn lp-btn-login" id="lp-login-btn">LOGIN</button>
+          <button class="lp-btn lp-btn-register" id="lp-register-btn">REGISTER</button>
+          <button class="lp-btn lp-btn-close" id="lp-close-btn">CLOSE</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Tool unlock notification -->
@@ -106,6 +124,39 @@
       loggedIn: {{ current_user.is_authenticated | tojson }},
       username: {{ (current_user.username if current_user.is_authenticated else '') | tojson }}
     };
+    
+    // После авторизации проверяем, есть ли сохранённые очки для отправки
+    if (window.AUTH.loggedIn) {
+      var pendingScore = sessionStorage.getItem('bb_pending_score');
+      var pendingDifficulty = sessionStorage.getItem('bb_pending_difficulty');
+      if (pendingScore && pendingDifficulty) {
+        console.log('Submitting pending score after login:', pendingScore, pendingDifficulty);
+        sessionStorage.removeItem('bb_pending_score');
+        sessionStorage.removeItem('bb_pending_difficulty');
+        
+        fetch('/api/scores', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ score: parseInt(pendingScore), difficulty: pendingDifficulty })
+        })
+        .then(function(r) {
+          if (!r.ok) {
+            console.error('Pending score submit failed:', r.status);
+            return null;
+          }
+          return r.json();
+        })
+        .then(function(data) {
+          console.log('Pending score submitted:', data);
+          if (data && data.status === 'ok') {
+            alert('Score ' + pendingScore + ' saved to leaderboard!');
+          }
+        })
+        .catch(function(err) {
+          console.error('Pending score error:', err);
+        });
+      }
+    }
   </script>
   <script src="/static/js/save_system.js"></script>
   <script src="/static/js/starfield.js"></script>

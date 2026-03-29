@@ -45,6 +45,11 @@ instance/uploaded_images/
 *.context
 *.md.bak
 
+# AI/Project documentation files (not for public repo)
+CLAUDE.md
+review.md
+*.local.md
+
 # AI logs and temporary files
 **/ai_logs/
 **/agent_memory/

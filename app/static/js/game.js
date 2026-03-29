@@ -116,73 +116,121 @@ function getCell(r, c) {
 }
 
 // ---- Tray / Block generation ----
-function canShapeFitAnywhere(shape) {
-  for (let r = 0; r < BOARD_SIZE; r++) {
-    for (let c = 0; c < BOARD_SIZE; c++) {
-      if (canPlace(r, c, shape)) return true;
-    }
-  }
-  return false;
+
+// 1. Создаем глубокую копию доски для безопасных тестов
+function cloneBoardForSim(b) {
+  return b.map(row => row.map(cell => ({ type: cell.type, color: cell.color, chainHits: cell.chainHits })));
 }
 
+// 2. Проверяем, влезает ли фигура на виртуальную доску
+function canPlaceOnSimBoard(simBoard, row, col, shape) {
+  return shape.cells.every(rc => {
+    const r = row + rc[0], c = col + rc[1];
+    return r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE && simBoard[r][c].type === 0;
+  });
+}
+
+// 3. Симулируем установку фигуры и очистку линий (с учетом камней и цепей)
+function simulatePlacement(simBoard, row, col, shape) {
+  shape.cells.forEach(rc => {
+    simBoard[row + rc[0]][col + rc[1]] = { type: 1, color: 0, chainHits: 0 };
+  });
+
+  const rowsToClear = [];
+  const colsToClear = [];
+
+  for (let r = 0; r < BOARD_SIZE; r++) {
+    if (simBoard[r].every(v => v.type !== 0 && v.type !== 4)) rowsToClear.push(r);
+  }
+  for (let c = 0; c < BOARD_SIZE; c++) {
+    if (simBoard.every(row => row[c].type !== 0 && row[c].type !== 4)) colsToClear.push(c);
+  }
+
+  rowsToClear.forEach(r => {
+    for (let c = 0; c < BOARD_SIZE; c++) {
+      if (simBoard[r][c].type !== 2) {
+        if (simBoard[r][c].type === 3) {
+          simBoard[r][c].chainHits--;
+          if (simBoard[r][c].chainHits <= 0) simBoard[r][c] = { type: 0, color: -1, chainHits: 0 };
+        } else {
+          simBoard[r][c] = { type: 0, color: -1, chainHits: 0 };
+        }
+      }
+    }
+  });
+
+  colsToClear.forEach(c => {
+    for (let r = 0; r < BOARD_SIZE; r++) {
+      if (simBoard[r][c].type !== 2) {
+        if (simBoard[r][c].type === 3) {
+          if (!rowsToClear.includes(r)) {
+            simBoard[r][c].chainHits--;
+            if (simBoard[r][c].chainHits <= 0) simBoard[r][c] = { type: 0, color: -1, chainHits: 0 };
+          }
+        } else {
+          simBoard[r][c] = { type: 0, color: -1, chainHits: 0 };
+        }
+      }
+    }
+  });
+}
+
+// 4. Умная выдача фигур
 function dealBlocks() {
-  // Build playable pool: shapes that can be placed somewhere on current board
-  const playablePool = SHAPES.filter(s => canShapeFitAnywhere(s));
-
-  // Fallback to smallest shapes (indices 0-3) if board is nearly full
-  const pool = playablePool.length > 0 ? playablePool : SHAPES.slice(0, 4);
-
   const cfg = (window.Difficulty && currentDifficulty)
     ? window.Difficulty.DIFFICULTY_CONFIG[currentDifficulty]
     : null;
   const hardcoreChance = cfg ? (cfg.hardcoreChance || 0) : 0;
 
-  // Emergency fallback shapes: 1x1, 1x2, 2x1 (indices 0-2) — always tiny
-  const EMERGENCY_SHAPES = SHAPES.slice(0, 3);
+  let simBoard = cloneBoardForSim(board);
+  let generated = [];
 
-  var MAX_DEAL_ATTEMPTS = 10;
-  var attempt = 0;
-  var generated = null;
-
-  while (attempt < MAX_DEAL_ATTEMPTS) {
-    generated = Array.from({ length: 3 }, function () {
-      var useRandom = hardcoreChance > 0 && Math.random() < hardcoreChance;
-      var shape = useRandom
-        ? SHAPES[Math.floor(Math.random() * SHAPES.length)]
-        : pool[Math.floor(Math.random() * pool.length)];
-      return {
-        shape: shape,
-        color: Math.floor(Math.random() * NUM_COLORS),
-        used: false,
-      };
+  // Генерируем 3 фигуры, гарантируя 100% проходимость
+  for (let i = 0; i < 3; i++) {
+    let validShapes = SHAPES.filter(s => {
+      for (let r = 0; r < BOARD_SIZE; r++) {
+        for (let c = 0; c < BOARD_SIZE; c++) {
+          if (canPlaceOnSimBoard(simBoard, r, c, s)) return true;
+        }
+      }
+      return false;
     });
 
-    // Validate: at least one generated block must be placeable on the current board
-    var anyFits = generated.some(function (b) { return canShapeFitAnywhere(b.shape); });
-    if (anyFits) break;
+    // Если доска забита и ходов нет, выдаем кубики 1x1, чтобы игра могла корректно завершиться
+    if (validShapes.length === 0) {
+      while (generated.length < 3) {
+        generated.push({ shape: SHAPES[0], color: Math.floor(Math.random() * NUM_COLORS), used: false });
+      }
+      break;
+    }
 
-    attempt++;
-  }
+    let shape;
+    let useHardcore = hardcoreChance > 0 && Math.random() < hardcoreChance;
 
-  // After MAX_DEAL_ATTEMPTS, if still no block fits, force an emergency small block
-  // into slot 0 so the player always has something playable (if the board has any space)
-  if (attempt >= MAX_DEAL_ATTEMPTS) {
-    var emergencyShape = null;
-    for (var i = 0; i < EMERGENCY_SHAPES.length; i++) {
-      if (canShapeFitAnywhere(EMERGENCY_SHAPES[i])) {
-        emergencyShape = EMERGENCY_SHAPES[i];
-        break;
+    if (useHardcore) {
+      // На высокой сложности пытаемся подкинуть сложную случайную фигуру. 
+      // Но ТОЛЬКО если она физически поместится! Иначе это будет несправедливо.
+      let hardShape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+      shape = validShapes.includes(hardShape) ? hardShape : validShapes[Math.floor(Math.random() * validShapes.length)];
+    } else {
+      shape = validShapes[Math.floor(Math.random() * validShapes.length)];
+    }
+
+    generated.push({ shape: shape, color: Math.floor(Math.random() * NUM_COLORS), used: false });
+
+    // Ставим фигуру в случайное валидное место на симулированной доске для следующего шага
+    let possiblePlacements = [];
+    for (let r = 0; r < BOARD_SIZE; r++) {
+      for (let c = 0; c < BOARD_SIZE; c++) {
+        if (canPlaceOnSimBoard(simBoard, r, c, shape)) possiblePlacements.push({r, c});
       }
     }
-    if (emergencyShape !== null) {
-      generated[0] = {
-        shape: emergencyShape,
-        color: Math.floor(Math.random() * NUM_COLORS),
-        used: false,
-      };
-    }
-    // If even emergency shapes don't fit, board is genuinely full — game-over is correct
+    let placement = possiblePlacements[Math.floor(Math.random() * possiblePlacements.length)];
+    simulatePlacement(simBoard, placement.r, placement.c, shape);
   }
+
+  // Перемешиваем панель! Игрок получает честный набор, но должен сам найти порядок
+  generated.sort(() => Math.random() - 0.5);
 
   trayBlocks = generated;
   renderTray();
@@ -477,17 +525,63 @@ function checkGameOver() {
       finalEl.textContent = score;
       gameOverEl.style.display = 'flex';
       if (window.SaveSystem) window.SaveSystem.clear();
+
       if (window.AUTH && window.AUTH.loggedIn) {
         fetch('/api/scores', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ score: score, difficulty: currentDifficulty })
         })
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-          if (data.leaderboard) updateGameOverLeaderboard(data);
+        .then(function(r) {
+          if (!r.ok) {
+            console.error('Score submit failed:', r.status);
+            return null;
+          }
+          return r.json();
         })
-        .catch(function() {});
+        .then(function(data) {
+          if (data && data.leaderboard) updateGameOverLeaderboard(data);
+        })
+        .catch(function(err) {
+          console.error('Score submit error:', err);
+        });
+      } else {
+        // Show login prompt modal for unauthenticated users
+        var promptEl = document.getElementById('login-prompt');
+        var promptScoreEl = document.getElementById('prompt-final-score');
+        var closeBtn = document.getElementById('lp-close-btn');
+        var loginBtn = document.getElementById('lp-login-btn');
+        var registerBtn = document.getElementById('lp-register-btn');
+
+        if (promptEl && promptScoreEl) {
+          promptScoreEl.textContent = score;
+          promptEl.style.display = 'flex';
+
+          // Save score to sessionStorage for later submission after login
+          sessionStorage.setItem('bb_pending_score', score.toString());
+          sessionStorage.setItem('bb_pending_difficulty', currentDifficulty);
+
+          // Close button handler
+          if (closeBtn) {
+            closeBtn.onclick = function() {
+              promptEl.style.display = 'none';
+            };
+          }
+          
+          // Login button handler
+          if (loginBtn) {
+            loginBtn.onclick = function() {
+              window.location.href = '/auth/login';
+            };
+          }
+          
+          // Register button handler
+          if (registerBtn) {
+            registerBtn.onclick = function() {
+              window.location.href = '/auth/register';
+            };
+          }
+        }
       }
     }, 200);
   }
@@ -550,6 +644,13 @@ function restoreGame(state) {
   bestEl.textContent = bestScore;
   renderBoard();
   renderTray();
+  // Re-attach drag handlers to restored tray blocks
+  trayBlocks.forEach(function(block, idx) {
+    if (!block.used) {
+      var previewEl = trayEl.querySelector('[data-idx="' + idx + '"]');
+      if (previewEl) attachDragHandlers(previewEl, idx);
+    }
+  });
   // update difficulty buttons
   document.querySelectorAll('.diff-switch-btn').forEach(function(btn) {
     btn.classList.toggle('active', btn.dataset.diff === currentDifficulty);
@@ -593,9 +694,13 @@ initGame('beginner');
 // Check for saved game
 if (window.SaveSystem && window.SaveSystem.hasSave()) {
   var saved = window.SaveSystem.load();
-  var resume = confirm('Resume previous game? (' + saved.difficulty + ', score: ' + saved.score + ')');
-  if (resume) {
-    restoreGame(saved);
+  if (saved && saved.board && saved.blocks) {
+    var resume = confirm('Resume previous game? (' + saved.difficulty + ', score: ' + saved.score + ')');
+    if (resume) {
+      restoreGame(saved);
+    } else {
+      window.SaveSystem.clear();
+    }
   } else {
     window.SaveSystem.clear();
   }

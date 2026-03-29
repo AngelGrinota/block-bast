@@ -12,6 +12,7 @@
     {% if current_user.is_authenticated %}
       <span class="site-header__username">{{ current_user.username }}</span>
       <form method="POST" action="{{ url_for('auth.logout') }}" class="site-header__logout-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <button type="submit" class="auth-btn auth-btn--outline">LOGOUT</button>
       </form>
     {% else %}

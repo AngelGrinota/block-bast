@@ -131,6 +131,7 @@
       {% endwith %}
 
       <form method="POST" action="{{ url_for('auth.register') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <div style="display:flex;flex-direction:column;gap:16px;">
           <div class="auth-field">
             <label for="username">USERNAME</label>
